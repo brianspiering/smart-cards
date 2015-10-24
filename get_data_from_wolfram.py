@@ -27,6 +27,26 @@ def clean_wolfram_data(raw_data):
     except ValueError:
         print('\n\n{} is not handled by the code'.format(raw_data))
 
+def make_card_front(title, topic):
+    "Reformat a title string into front of a flashcard."
+    
+    # Create a translation dictionary
+    phrase = {'plots': {'subject': 'Please draw a plot of', 
+                        'punctation': '.'},
+              'visual form':{'subject': 'What is the mathmatical symbol for', 
+                            'punctation': '?'},
+             'decimal approximation': {'subject': 'Name as many decimals as possible for', 
+                            'punctation': '.'},
+             'definition': {'subject': 'What is the definition of', 
+                            'punctation': '.'},
+              'conversions to other units': {'subject': 'Name equivalent terms for', 
+                            'punctation': '.'},
+             }
+    
+    title = title.lower().strip() # Munge data
+    
+    card_front = phrase[title]['subject']+' '+topic+phrase[title]['punctation']
+    return card_front
 
 def save_image(url, filename):
     "Save image to disk"
@@ -55,40 +75,34 @@ r  = requests.get(url)
 data = r.text
 soup = BeautifulSoup(data)
 
-# Get just the simple flashcard info
+# Make an image flashcard
 for i, pod in enumerate(soup.findAll('pod')):
     if i == 1:
-        card_front = "What is the "+ pod.attrs['title'].lower() + ' of ' + topic + '?'
-        text = pod.findAll("img")[0].get("alt") # Sometimes 
-        # card_back = clean_wolfram_data(raw_data) # The text is not good nor consistent
-        image_url = pod.findAll("img")[0].get("src")
-        image_filename = 'data/images/'+topic
-        save_image(image_url, image_filename)
-        break
+        try:
+            card_front = make_card_front(pod.attrs['title'], topic)
 
-# Example of flashcard 
-# data = {"fcid": 1,
-#         "order": 0,
-#         "term": "pi",
-#         "definition": "3.1416",
-#         "hint": "",
-#         "example": "",
-#         "term_image": None,
-#         "hint_image": None}
+            # raw_data = pod.findAll("img")[0].get("alt") # Sometimes 
+            # card_back = clean_wolfram_data(raw_data) # The text is not good nor consistent
+            image_url = pod.findAll("img")[0].get("src")
+            image_filename = 'data/images/'+topic
+            save_image(image_url, image_filename)
+            flashcard = {"fcid": 1,
+                    "order": 0,
+                    "term": card_front,
+                    "definition": None,
+                    "hint": "",
+                    "example": "",
+                    "term_image": image_filename,
+                    "hint_image": None}
 
-flashcard = {"fcid": 1,
-        "order": 0,
-        "term": card_front,
-        "definition": None,
-        "hint": "",
-        "example": "",
-        "term_image": image_filename,
-        "hint_image": None}
+            # Save the data
+            flashcard_endpoint = "data/"+topic+".json"
 
-# Save the data
-flashcard_endpoint = "data/"+topic+".json"
+            with open(flashcard_endpoint, "w") as data_out:
+                json.dump(flashcard, data_out)
 
-with open(flashcard_endpoint, "w") as data_out:
-    json.dump(flashcard, data_out)
+            print('Wolfram Alpha data stored for: '+topic)
 
-print('Wolfram Alpha data stored for: '+topic)
+            break
+        except NameError:
+            print("Couldn't find your term. Please try another one.")
