@@ -1,9 +1,17 @@
+" Call wolframalpha API"
+
 from collections import defaultdict
 from bs4 import BeautifulSoup
 import requests
 import json
 
-
+def clean_wolfram_data(raw_data):
+    try:
+        clean_data = round(float(raw_data[:10]), 4)
+    except ValueError:
+        print(raw_data + ' is goofy data')
+    
+    return clean_data
 
 # Open config file to get key
 with open('wolframalpha_api.config', 'r') as f:
@@ -11,34 +19,49 @@ with open('wolframalpha_api.config', 'r') as f:
             
 # Ask for topic to query
 print 'Enter a topic to query on Wolfram Alpha:'
-TOPIC = raw_input()
+topic = raw_input()
 
 # Build URL using topic/key
-url = 'http://api.wolframalpha.com/v2/query?input=' + TOPIC + "&format=image" +'&appid=' + wolfram_key 
+url = 'http://api.wolframalpha.com/v2/query?input=' + topic + "&format=image" +'&appid=' + wolfram_key 
 
 # Scrape URL using requests and beautiful soup
 r  = requests.get(url)
 data = r.text
 soup = BeautifulSoup(data)
 
-print '\nURL: ',url,'\n'
+# Get just the simple flashcard info
+for i, pod in enumerate(soup.findAll('pod')):
+    if i == 1:
+        card_front = "What is the "+ pod.attrs['title'].lower() + ' of ' + topic + '?'
+        raw_data = pod.findAll("img")[0].get("alt")
+        card_back = clean_wolfram_data(raw_data)
+        break
+
+# Example of flashcard 
+# data = {"fcid": 1,
+#         "order": 0,
+#         "term": "pi",
+#         "definition": "3.1416",
+#         "hint": "",
+#         "example": "",
+#         "term_image": None,
+#         "hint_image": None}
+
+flashcard = {"fcid": 1,
+        "order": 0,
+        "term": card_front,
+        "definition": card_back,
+        "hint": "",
+        "example": "",
+        "term_image": None,
+        "hint_image": None}
+
+# Save the data
+file_endpoint = "data/"+topic+".txt"
+
+with open(file_endpoint, "w") as data_out:
+    json.dump(flashcard, data_out)
 
 
-pod_data = defaultdict(list)
-for i,pod in enumerate(soup.findAll('pod')):
-    pod_data[pod["id"]] = [ pod.findAll("img")[0].get("src")]
-    for info in pod.findAll("info"):
-         if info.get("text") != None and info.findAll("img"):
-            pod_data[pod["id"]].append(info.get("text")) 
-            pod_data[pod["id"]].append(info.findAll("img")[0].get("src"))
-
-
-data_out = open(TOPIC, "w")
-data_out.write(json.dumps(pod_data))
-data_out.close()
-
-data_in = open(TOPIC, "r")
-for line in data_in.readlines():
-    print json.loads(line).keys()
-    print "\n"
-    print json.loads(line).values()
+# TODO: Write images also
+# see wolframalpha_api.ipynb
