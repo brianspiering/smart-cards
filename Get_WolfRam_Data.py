@@ -1,4 +1,11 @@
-" Call wolframalpha API"
+""" Call wolframalpha API
+Works for:
+- pi
+
+Doesn't work for:
+- Ln; returns plots
+- e
+"""
 
 from collections import defaultdict
 from bs4 import BeautifulSoup
@@ -8,11 +15,11 @@ import json
 def clean_wolfram_data(raw_data):
     try:
         clean_data = round(float(raw_data[:10]), 4)
-    except ValueError:
-        print(raw_data + ' is goofy data')
-    
-    return clean_data
 
+        return clean_data
+    except ValueError:
+        print('\n\n{} is not handled by the code'.format(raw_data))
+    
 # Open config file to get key
 with open('wolframalpha_api.config', 'r') as f:
     wolfram_key = f.readline().rstrip()
