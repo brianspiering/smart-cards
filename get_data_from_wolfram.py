@@ -60,7 +60,7 @@ for i, pod in enumerate(soup.findAll('pod')):
     if i == 1:
         card_front = "What is the "+ pod.attrs['title'].lower() + ' of ' + topic + '?'
         text = pod.findAll("img")[0].get("alt") # Sometimes 
-        # card_back = clean_wolfram_data(raw_data)
+        # card_back = clean_wolfram_data(raw_data) # The text is not good nor consistent
         image_url = pod.findAll("img")[0].get("src")
         image_filename = 'data/images/'+topic
         save_image(image_url, image_filename)
@@ -92,6 +92,3 @@ with open(flashcard_endpoint, "w") as data_out:
     json.dump(flashcard, data_out)
 
 print('Wolfram Alpha data stored for: '+topic)
-
-# TODO: Write images also
-# see wolframalpha_api.ipynb
