@@ -62,7 +62,7 @@ def create_flashcard(i,card_front,card_back):
     arguments. By default a new data file will be written, but the mode
     can be set to 'a' or 'a+' to append to an existing file.
     '''
-    flashcard = {"fcid": 1,
+    flashcard = {"fcid": i,
                  "order": 0,
                  "term": card_front,
                  "definition": card_back,
