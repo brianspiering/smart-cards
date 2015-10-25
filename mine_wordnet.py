@@ -26,7 +26,7 @@ def get_ontology(seed_syn,word,write_file=False):
         hypernyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hypernyms()])))
         hyponyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hyponyms()])))
 
-    if not hyponyms.values()[0]:
+    if not hyponyms.values():
         return [],[]
     
     print len(hyponyms.values()),hyponyms.values()
