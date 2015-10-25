@@ -2,12 +2,8 @@
 
 docs (pdf): http://products.wolframalpha.com/docs/WolframAlpha-API-Reference.pdf?_ga=1.107330246.599422832.1445658318
 
-Works for:
-- e: Not a great flashcard
-- pi: Good stuff
-
 Doesn't work for:
-- Ln; returns plots
+- one: returns itself
 
 """
 
@@ -31,16 +27,34 @@ def make_card_front(title, topic):
     "Reformat a title string into front of a flashcard."
     
     # Create a translation dictionary
-    phrase = {'plots': {'subject': 'Please draw a plot of', 
+    phrase = {'plot': {'subject': 'Please draw a plot of', 
+                        'punctation': '.'},
+             'plots': {'subject': 'Please draw a plot of', 
+                        'punctation': '.'},
+             'illustration': {'subject': 'Please draw a plot of', 
                         'punctation': '.'},
               'visual form':{'subject': 'What is the mathmatical symbol for', 
                             'punctation': '?'},
              'decimal approximation': {'subject': 'Name as many decimals as possible for', 
                             'punctation': '.'},
+             'basic definition': {'subject': 'What is the definition of', 
+                            'punctation': '?'},              
              'definition': {'subject': 'What is the definition of', 
-                            'punctation': '.'},
+                            'punctation': '?'},
+             'definitions': {'subject': 'What are definitions of', 
+                            'punctation': '?'},
+            'equation': {'subject': 'What is the equation for', 
+                            'punctation': '?'},
               'conversions to other units': {'subject': 'Name equivalent terms for', 
                             'punctation': '.'},
+              'number name': {'subject': 'Name equivalent terms for', 
+                            'punctation': '.'}, 
+                'statement': {'subject': 'What is the', 
+                            'punctation': '?'}, 
+            'alternate names': {'subject': 'What are alternate names for', 
+                            'punctation': '?'},  
+                'limit':  {'subject': 'What is unique about a ', 
+                            'punctation': '?'}       
              }
     
     title = title.lower().strip() # Munge data
