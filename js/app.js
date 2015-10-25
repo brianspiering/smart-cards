@@ -58,38 +58,6 @@ app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog'
         $scope.messages = data || "Request failed";
         $scope.status = status;
        });
-
-    /*$scope.flashCards = [{
-      question: "What is an outlier ?",
-      answer: "A number that is a lot smaller or larger than the rest",
-      topic: "Algebra",
-      color: "yellow",
-      id: "1"
-    }, {
-      question: "Biased ?",
-      answer: "Data that is not random and influenced by something",
-      topic: "Probability",
-      color: "green",
-      id: "2"
-    }, {
-      question: "Causal Relationship",
-      answer: "One event makes the other happen",
-      topic: "Algebra",
-      color: "pink",
-      id: "3"
-    }, {
-      question: "Correlation",
-      answer: "Two events occur at the same time, one does not cause the other",
-      topic: "Algebra",
-      color: "red",
-      id: "4"
-    }, {
-      question: "Mode",
-      answer: "The number that occurs the most often",
-      topic: "Statistics",
-      color: "blue",
-      id: "5"
-    }];*/
   }
 
   $scope.processFlashCards = function() {
