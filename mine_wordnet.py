@@ -13,6 +13,10 @@ import csv
 import sys
 import subprocess
 
+import get_data_from_wolfram
+reload(get_data_from_wolfram)
+from get_data_from_wolfram import *
+
 def get_definitions(word):
     '''
     Takes a word as input and returns all definitions in the form of a
@@ -123,6 +127,4 @@ if __name__ == "__main__":
     main(topic)
     
     # Now that we've retrieved relevant semantic meanings, run the wolfram api script
-    p = subprocess.Popen("python get_data_from_wolfram.py " + topic, stdout=subprocess.PIPE, shell=True)
-    (output, err) = p.communicate()
-    print output
+    call_wolfram_api(topic)
