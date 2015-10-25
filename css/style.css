@@ -167,3 +167,11 @@ md-list-item.md-3-line md-divider[md-inset] {
   -webkit-transition: all 1s;
   -webkit-perspective: 1000;
 }
+.logo {
+  background: url('../smartcards.png') no-repeat center;
+  width: 303px;
+  height: 400px;
+  background-size: 340px 240px;
+  top: auto;
+  bottom: 10px;
+}
