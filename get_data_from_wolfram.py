@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """ Call wolframalpha API
 
 docs (pdf): http://products.wolframalpha.com/docs/WolframAlpha-API-Reference.pdf?_ga=1.107330246.599422832.1445658318
@@ -11,6 +13,7 @@ from collections import defaultdict
 import json
 import requests
 import shutil
+import sys
 
 from bs4 import BeautifulSoup
 
@@ -50,49 +53,53 @@ with open('wolframalpha_api.config', 'r') as f:
 with open("title_translation.json", "r") as f:
     title_translation = json.load(f)
 
-# Ask for topic to query
-topic = raw_input('Enter a topic to query on Wolfram Alpha: ')
-topic = topic.lower().strip()
+# topic = raw_input('Enter a topic to query on Wolfram Alpha: ') # Ask for topic to query
+def main(argv):
+    for topic in argv:
+        topic = topic.lower().strip()
 
-# Build URL using topic/key
-url = 'http://api.wolframalpha.com/v2/query?input=' + topic + "&format=image" +'&appid=' + wolfram_key 
+        # Build URL using topic/key
+        url = 'http://api.wolframalpha.com/v2/query?input=' + topic + "&format=image" +'&appid=' + wolfram_key 
 
-# Scrape URL
-r  = requests.get(url)
-data = r.text
-soup = BeautifulSoup(data)
+        # Scrape URL
+        r  = requests.get(url)
+        data = r.text
+        soup = BeautifulSoup(data)
 
-# Make an image flashcard
-for i, pod in enumerate(soup.findAll('pod')):
-    if i == 1:
-        try:
-            title = pod.attrs['title']
-            card_front = make_card_front(title, topic)
+        # Make an image flashcard
+        for i, pod in enumerate(soup.findAll('pod')):
+            if i == 1:
+                try:
+                    title = pod.attrs['title']
+                    card_front = make_card_front(title, topic)
 
-            # raw_data = pod.findAll("img")[0].get("alt") # Sometimes 
-            # card_back = clean_wolfram_data(raw_data) # The text is not good nor consistent
-            image_url = pod.findAll("img")[0].get("src")
-            image_filename = 'data/images/'+topic
-            save_image(image_url, image_filename)
-            flashcard = {"fcid": 1,
-                    "order": 0,
-                    "term": card_front,
-                    "definition": None,
-                    "hint": "",
-                    "example": "",
-                    "term_image": image_filename,
-                    "hint_image": None}
+                    # raw_data = pod.findAll("img")[0].get("alt") # Sometimes 
+                    # card_back = clean_wolfram_data(raw_data) # The text is not good nor consistent
+                    image_url = pod.findAll("img")[0].get("src")
+                    image_filename = 'data/images/'+topic
+                    save_image(image_url, image_filename)
+                    flashcard = {"fcid": 1,
+                            "order": 0,
+                            "term": card_front,
+                            "definition": None,
+                            "hint": "",
+                            "example": "",
+                            "term_image": image_filename,
+                            "hint_image": None}
 
-            # Save the data
-            flashcard_endpoint = "data/"+topic+".json"
+                    # Save the data
+                    flashcard_endpoint = "data/"+topic+".json"
 
-            with open(flashcard_endpoint, "w") as data_out:
-                json.dump(flashcard, data_out)
+                    with open(flashcard_endpoint, "w") as data_out:
+                        json.dump(flashcard, data_out)
 
-            print('Wolfram Alpha data stored for: '+topic)
+                    print('Wolfram Alpha data stored for: '+topic)
 
-            break
-        except KeyError:
-            print("New title. Please process: '"+title+"'")
-        except NameError:
-            print("Couldn't find your term. Please try another one.")
+                    break
+                except KeyError:
+                    print("New title. Please process: '"+title+"'")
+                except NameError:
+                    print("Couldn't find your term. Please try another one.")
+
+if __name__ == "__main__":
+    main(sys.argv)
