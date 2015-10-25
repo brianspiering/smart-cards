@@ -76,30 +76,29 @@ def create_flashcard(i,card_front,card_back):
     with open(file_endpoint, "w") as data_out:
         json.dump(flashcard, data_out)
 
-#### TODO: Not yet converted to real function
-# def get_synonyms(word):
-#     print "THESAURUS"
-#     print 50 * '*'
-#     for i,j in enumerate(wn.synsets(topic)):
-#         print "Meaning",i, "NLTK ID:", j.name()
-#         print "Definition:",j.definition()
-#         print "Synonyms:",  ", ".join(j.lemma_names())
-#         print
-
 def main(argv):
+    
+    DEBUG = False
+    
     # Start by providing seed word to filter out unrelated topics/words
     SEED = 'math'
     seed_syn = get_definitions(SEED).keys()[0]
-    # print 'SEED: ',SEED
-    # print seed_syn
+    
+    if DEBUG:
+        print 'SEED: ',SEED
+        print seed_syn
 
     topic = argv
     topic_syns = get_definitions(topic)
     print 'TOPIC: ',topic
-    # print 'SYNSETS: ',topic_syns
+    if DEBUG:
+        print 'SYNSETS: ',topic_syns
 
     relevant_synsets = calc_seed_similarity(seed_syn,topic_syns.keys())
-    # print 'REL SYNSETS: ',relevant_synsets
+    if DEBUG:
+        print 'REL SYNSETS: ',relevant_synsets
+        
+    # Create definition flashcards for relevant semantic matches
     for i in range(len(relevant_synsets)):
         create_flashcard(i,topic,topic_syns[relevant_synsets[i][0]])
 
@@ -108,10 +107,10 @@ def main(argv):
         _,_ = get_ontology(seed_syn,topic,write_file=True) # hypernyms, hyponyms
 
 if __name__ == "__main__":
+    # Retrive relevant semantic meanings from the topic entered by user
     _,topic = sys.argv
     main(topic)
     
-    print topic
+    # Now that we've retrieved relevant semantic meanings, run the wolfram api script
     p = subprocess.Popen("python get_data_from_wolfram.py " + topic, stdout=subprocess.PIPE, shell=True)
     (output, err) = p.communicate()
-    #print output
