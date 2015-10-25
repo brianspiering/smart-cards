@@ -1,7 +1,7 @@
 from nltk.corpus import wordnet as wn
 from itertools import product,chain
 from collections import defaultdict
-import operator,json,csv
+import operator,json,csv,sys
 
 def get_definitions(word):
     '''
@@ -89,19 +89,25 @@ def create_flashcard(card_front,card_back,mode='w'):
 #         print "Synonyms:",  ", ".join(j.lemma_names())
 #         print
 
-# Start by providing seed word to filter out unrelated topics/words
-SEED = 'math'
-seed_syn = get_definitions(SEED).keys()[0]
-# print 'SEED: ',SEED
-# print seed_syn
+def main(argv):
+    # Start by providing seed word to filter out unrelated topics/words
+    SEED = 'math'
+    seed_syn = get_definitions(SEED).keys()[0]
+    # print 'SEED: ',SEED
+    # print seed_syn
 
-topic = 'triangle'
-topic_syns = get_definitions(topic)
-# print 'TOPIC: ',topic
-# print 'SYNSETS: ',topic_syns
+    topic = argv
+    topic_syns = get_definitions(topic)
+    print 'TOPIC: ',topic
+    # print 'SYNSETS: ',topic_syns
 
-relevant_synsets = calc_seed_similarity(seed_syn,topic_syns.keys())
-# for i in range(len(relevant_synsets)):
-#     create_flashcard(topic,topic_syns[relevant_synsets[i][0]],mode='a+')
+    relevant_synsets = calc_seed_similarity(seed_syn,topic_syns.keys())
+    print 'REL SYNSETS: ',relevant_synsets
+    # for i in range(len(relevant_synsets)):
+    #     create_flashcard(topic,topic_syns[relevant_synsets[i][0]],mode='a+')
 
-hypers,hypos = get_ontology(seed_syn,topic,write_file=True)
+    hypernyms,hyponyms = get_ontology(seed_syn,topic,write_file=True)
+
+if __name__ == "__main__":
+    _,topic = sys.argv
+    main(topic)
