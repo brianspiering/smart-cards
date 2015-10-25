@@ -33,7 +33,8 @@ app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog'
   $scope.colors = ['red', 'blue', 'green', 'darkBlue', 'yellow', 'purple', 'deepBlue', 'lightPurple'];
 
   $scope.fetchFlashCards = function(keyword) {
-    $http.get(BASE_URL + "category=" + keyword, {})
+    var requestURL = BASE_URL + "category=" + keyword;
+    $http.get(requestURL, {})
       .success(function (data, status, headers, config) {
         console.log(data);
       });
