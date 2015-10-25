@@ -48,17 +48,16 @@ app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog'
             id: flashCard.fcid
           })
         });
-
+        $scope.flashCards = flashCards;
+        $scope.$apply();
+        setTimeout(function() {
+          $scope.processFlashCards();
+        }, 500);
       })
       .error(function(data, status) {
         $scope.messages = data || "Request failed";
         $scope.status = status;
-       });  
-    $scope.flashCards = flashCards;
-    $scope.$apply();
-    setTimeout(function() {
-      $scope.processFlashCards();
-    }, 500)
+       });
 
     /*$scope.flashCards = [{
       question: "What is an outlier ?",
