@@ -1,13 +1,11 @@
+#!/usr/bin/env python
+
 """ Call wolframalpha API
 
 docs (pdf): http://products.wolframalpha.com/docs/WolframAlpha-API-Reference.pdf?_ga=1.107330246.599422832.1445658318
 
-Works for:
-- e: Not a great flashcard
-- pi: Good stuff
-
 Doesn't work for:
-- Ln; returns plots
+- one: returns itself
 
 """
 
@@ -15,6 +13,7 @@ from collections import defaultdict
 import json
 import requests
 import shutil
+import sys
 
 from bs4 import BeautifulSoup
 
@@ -27,6 +26,12 @@ def clean_wolfram_data(raw_data):
     except ValueError:
         print('\n\n{} is not handled by the code'.format(raw_data))
 
+def make_card_front(title, topic):
+    "Reformat a title string into front of a flashcard."
+    
+    title = title.lower().strip() # Munge data
+    card_front = title_translation[title]['subject']+' '+topic+title_translation[title]['punctation']
+    return card_front
 
 def save_image(url, filename):
     "Save image to disk"
@@ -38,57 +43,63 @@ def save_image(url, filename):
             shutil.copyfileobj(r.raw, f)
     else:
         print('Non-valid url')    
-    
+  
+
 # Open config file to get key
 with open('wolframalpha_api.config', 'r') as f:
     wolfram_key = f.readline().rstrip()
-            
-# Ask for topic to query
-topic = raw_input('Enter a topic to query on Wolfram Alpha: ')
-topic = topic.lower().strip()
+ 
+# Get phrase translation
+with open("title_translation.json", "r") as f:
+    title_translation = json.load(f)
 
-# Build URL using topic/key
-url = 'http://api.wolframalpha.com/v2/query?input=' + topic + "&format=image" +'&appid=' + wolfram_key 
+# topic = raw_input('Enter a topic to query on Wolfram Alpha: ') # Ask for topic to query
+def main(argv):
+    for topic in argv:
+        topic = topic.lower().strip()
 
-# Scrape URL
-r  = requests.get(url)
-data = r.text
-soup = BeautifulSoup(data)
+        # Build URL using topic/key
+        url = 'http://api.wolframalpha.com/v2/query?input=' + topic + "&format=image" +'&appid=' + wolfram_key 
 
-# Get just the simple flashcard info
-for i, pod in enumerate(soup.findAll('pod')):
-    if i == 1:
-        card_front = "What is the "+ pod.attrs['title'].lower() + ' of ' + topic + '?'
-        text = pod.findAll("img")[0].get("alt") # Sometimes 
-        # card_back = clean_wolfram_data(raw_data) # The text is not good nor consistent
-        image_url = pod.findAll("img")[0].get("src")
-        image_filename = 'data/images/'+topic
-        save_image(image_url, image_filename)
-        break
+        # Scrape URL
+        r  = requests.get(url)
+        data = r.text
+        soup = BeautifulSoup(data)
 
-# Example of flashcard 
-# data = {"fcid": 1,
-#         "order": 0,
-#         "term": "pi",
-#         "definition": "3.1416",
-#         "hint": "",
-#         "example": "",
-#         "term_image": None,
-#         "hint_image": None}
+        # Make an image flashcard
+        for i, pod in enumerate(soup.findAll('pod')):
+            if i == 1:
+                try:
+                    title = pod.attrs['title']
+                    card_front = make_card_front(title, topic)
 
-flashcard = {"fcid": 1,
-        "order": 0,
-        "term": card_front,
-        "definition": None,
-        "hint": "",
-        "example": "",
-        "term_image": image_filename,
-        "hint_image": None}
+                    # raw_data = pod.findAll("img")[0].get("alt") # Sometimes 
+                    # card_back = clean_wolfram_data(raw_data) # The text is not good nor consistent
+                    image_url = pod.findAll("img")[0].get("src")
+                    image_filename = 'data/images/'+topic
+                    save_image(image_url, image_filename)
+                    flashcard = {"fcid": 1,
+                            "order": 0,
+                            "term": card_front,
+                            "definition": None,
+                            "hint": "",
+                            "example": "",
+                            "term_image": image_filename,
+                            "hint_image": None}
 
-# Save the data
-flashcard_endpoint = "data/"+topic+".json"
+                    # Save the data
+                    flashcard_endpoint = "data/"+topic+".json"
 
-with open(flashcard_endpoint, "w") as data_out:
-    json.dump(flashcard, data_out)
+                    with open(flashcard_endpoint, "w") as data_out:
+                        json.dump(flashcard, data_out)
 
-print('Wolfram Alpha data stored for: '+topic)
+                    print('Wolfram Alpha data stored for: '+topic)
+
+                    break
+                except KeyError:
+                    print("New title. Please process: '"+title+"'")
+                except NameError:
+                    print("Couldn't find your term. Please try another one.")
+
+if __name__ == "__main__":
+    main(sys.argv)
