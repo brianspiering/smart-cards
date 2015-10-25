@@ -3,7 +3,7 @@
 <head>
   <link rel="stylesheet" href="./css/angular-material.min.css">
   <link rel="stylesheet" href="./css/style.css">
-  <title>Flash IT</title>
+  <title>SmartCards</title>
 </head>
 
 <body layout="row" ng-controller="AppCtrl" ng-cloak>
@@ -93,7 +93,7 @@
             <div flex-gt-sm="90" flex-gt-md="80">
               <div class="gridListdemoDynamicTiles" flex="">
                 <md-grid-list md-cols-sm="2" md-cols-md="4" md-cols-gt-md="8" md-row-height-gt-md="1:1" md-row-height="4:3" md-gutter="8px" md-gutter-gt-sm="4px">
-                  <md-grid-tile md-rowspan="2" md-colspan="2" md-colspan-sm="1" id="{{'card_' + card.id}}" class="closedCard" ng-repeat="card in flashCards | filter:search" ng-class="card.color" ng-click="toggleFlashCard($event)">
+                  <md-grid-tile md-rowspan="2" md-colspan="2" md-colspan-sm="1" id="{{'card_' + card.id}}" class="closedCard flashCard" ng-repeat="card in flashCards | filter:search" ng-class="card.color" ng-click="toggleFlashCard($event)">
                     <md-grid-tile-header>
                       <h3>{{card.topic}}</h3>
                     </md-grid-tile-header>
@@ -115,7 +115,7 @@
             <div flex-gt-sm="90" flex-gt-md="80">
               <div class="gridListdemoDynamicTiles" flex="">
                 <md-grid-list md-cols-sm="2" md-cols-md="4" md-cols-gt-md="8" md-row-height-gt-md="1:1" md-row-height="4:3" md-gutter="8px" md-gutter-gt-sm="4px">
-                  <md-grid-tile md-rowspan="2" md-colspan="2" md-colspan-sm="1" id="{{'card_' + card.id}}" class="closedCard" ng-repeat="card in flashCards | filter:search" ng-class="card.color" ng-click="toggleFlashCard($event)">
+                  <md-grid-tile md-rowspan="2" md-colspan="2" md-colspan-sm="1" id="{{'card_' + card.id}}" class="closedCard flashCard" ng-repeat="card in flashCards | filter:search" ng-class="card.color" ng-click="toggleFlashCard($event)">
                     <md-grid-tile-header>
                       <h3>{{card.topic}}</h3>
                     </md-grid-tile-header>
