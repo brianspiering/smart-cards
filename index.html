@@ -86,7 +86,56 @@
     </md-toolbar>
     <md-content flex>
     <div ui-view></div>
-      
+      <ui-view layout="column" layout-fill layout-padding>
+        <div class="inset" hide-sm></div>
+        <ng-switch on="data.selectedIndex" class="tabpanel-container">
+          <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout="row" layout-align="center center">
+            <div flex-gt-sm="90" flex-gt-md="80">
+              <div class="gridListdemoDynamicTiles" flex="">
+                <md-grid-list md-cols-sm="2" md-cols-md="4" md-cols-gt-md="8" md-row-height-gt-md="1:1" md-row-height="4:3" md-gutter="8px" md-gutter-gt-sm="4px">
+                  <md-grid-tile md-rowspan="2" md-colspan="2" md-colspan-sm="1" id="{{'card_' + card.id}}" class="closedCard" ng-repeat="card in flashCards | filter:search" ng-class="card.color" ng-click="toggleFlashCard($event)">
+                    <md-grid-tile-header>
+                      <h3>{{card.topic}}</h3>
+                    </md-grid-tile-header>
+                    <md-grid-tile-footer>
+                      <h3>{{card.question}}</h3>
+                    </md-grid-tile-footer>
+                    <div class="flashCardAnswer">
+                      <h3>
+                        {{card.answer}}
+                      </h3>
+                    </div>
+                  </md-grid-tile>
+                </md-grid-list>
+              </div>
+            </div>
+
+          </div>
+          <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout="row" layout-align="center center">
+            <div flex-gt-sm="90" flex-gt-md="80">
+              <div class="gridListdemoDynamicTiles" flex="">
+                <md-grid-list md-cols-sm="2" md-cols-md="4" md-cols-gt-md="8" md-row-height-gt-md="1:1" md-row-height="4:3" md-gutter="8px" md-gutter-gt-sm="4px">
+                  <md-grid-tile md-rowspan="2" md-colspan="2" md-colspan-sm="1" id="{{'card_' + card.id}}" class="closedCard" ng-repeat="card in flashCards | filter:search" ng-class="card.color" ng-click="toggleFlashCard($event)">
+                    <md-grid-tile-header>
+                      <h3>{{card.topic}}</h3>
+                    </md-grid-tile-header>
+                    <md-grid-tile-footer>
+                      <h3>{{card.question}}</h3>
+                    </md-grid-tile-footer>
+                    <div class="flashCardAnswer">
+                      <h3>
+                        {{card.answer}}
+                      </h3>
+                    </div>
+                  </md-grid-tile>
+                </md-grid-list>
+              </div>
+            </div>
+          </div>
+
+        </ng-switch>
+
+      </ui-view>
     </md-content>
   </div>
   <!-- Angular Material Dependencies -->
