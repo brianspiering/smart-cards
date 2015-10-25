@@ -10,6 +10,7 @@ Doesn't work for:
 """
 
 from collections import defaultdict
+import csv
 import json
 import requests
 import shutil
@@ -55,7 +56,19 @@ with open("title_translation.json", "r") as f:
 
 # topic = raw_input('Enter a topic to query on Wolfram Alpha: ') # Ask for topic to query
 def main(argv):
-    for topic in argv:
+    
+    category = argv[1]
+    try:
+        file_endpoint = "data/"+category+"_hyponyms.csv"
+         # Load file
+        with open(file_endpoint, 'rb') as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=',')
+            for topics in spamreader:
+                pass
+    except:
+        topics = [category]
+
+    for topic in topics:
         topic = topic.replace('_', ' ').lower().strip()
 
         # Build URL using topic/key
@@ -102,4 +115,4 @@ def main(argv):
                     print("Couldn't find your term. Please try another one.")
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main(sys.argv) # The command line argument is the name of the hyponyms file
