@@ -26,14 +26,14 @@ def get_ontology(seed_syn,word,write_file=False):
         hypernyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hypernyms()])))
         hyponyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hyponyms()])))
 
-    if not hyponyms.values()[0]:
+    if not hyponyms.values():
         return [],[]
     
-    print len(hyponyms.values()),hyponyms.values()
-    
     hypo_words = [hyponyms.values()[i].split(',') for i in range(len(hyponyms.values())) if hyponyms.values()[i]][0]
-    hypo_syns = [get_definitions(hypo_words[i]).keys()[0] for i in xrange(len(hypo_words))]
+    hypo_syns = [get_definitions(hypo_words[i].replace(' ','_')).keys()[0] for i in xrange(len(hypo_words))]
     relevant_hypo_synsets = calc_seed_similarity(seed_syn,hypo_syns)
+    
+    print hypo_syns,relevant_hypo_synsets
     
     # Write to file as feeder system to wolfram alpha api code
     if write_file:

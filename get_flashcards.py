@@ -3,12 +3,12 @@ from flask import Flask
 
 app = Flask(__name__)
 
-@app.route("/")
-
+@app.route("/<category>")
 def get_flashcards(category):
     import subprocess
-    p = subprocess.Popen("python mine_wordnet.py " + category, stdout=subprocess.PIPE, shell=True)
+    p = subprocess.Popen("python mine_wordnet.py " + category.split('=')[1], stdout=subprocess.PIPE, shell=True)
     (output, err) = p.communicate()
+    print output
     
-if __name__ == 'main':
+if __name__ == '__main__':
     app.run()
