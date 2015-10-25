@@ -1,7 +1,17 @@
+#!/usr/bin/env python
+
+'''
+Get relevant semantic meanings of word using nltk wordnet
+'''
+
 from nltk.corpus import wordnet as wn
 from itertools import product,chain
 from collections import defaultdict
-import operator,json,csv,sys,subprocess,os.path
+import operator
+import json
+import csv
+import sys
+import subprocess
 
 def get_definitions(word):
     '''
@@ -62,7 +72,7 @@ def create_flashcard(i,card_front,card_back):
     arguments. By default a new data file will be written, but the mode
     can be set to 'a' or 'a+' to append to an existing file.
     '''
-    flashcard = {"fcid": i,
+    flashcard = {"fcid": 1,
                  "order": 0,
                  "term": card_front,
                  "definition": card_back,
@@ -78,6 +88,7 @@ def create_flashcard(i,card_front,card_back):
 
 def main(argv):
     
+    # Global
     DEBUG = False
     
     # Start by providing seed word to filter out unrelated topics/words
@@ -114,3 +125,4 @@ if __name__ == "__main__":
     # Now that we've retrieved relevant semantic meanings, run the wolfram api script
     p = subprocess.Popen("python get_data_from_wolfram.py " + topic, stdout=subprocess.PIPE, shell=True)
     (output, err) = p.communicate()
+    print output

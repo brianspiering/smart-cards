@@ -81,6 +81,7 @@ def main(argv):
 
         # Make an image flashcard
         for i, pod in enumerate(soup.findAll('pod')):
+            print 'get_data_from_wolfram: ',topic,'|',i
             if i == 1:
                 try:
                     title = pod.attrs['title']
@@ -89,7 +90,7 @@ def main(argv):
                     # raw_data = pod.findAll("img")[0].get("alt") # Sometimes 
                     # card_back = clean_wolfram_data(raw_data) # The text is not good nor consistent
                     image_url = pod.findAll("img")[0].get("src")
-                    image_filename = 'data/images/'+topic
+                    image_filename = 'data/images/'+topic+'.jpg'
                     save_image(image_url, image_filename)
                     flashcard = {"fcid": 1,
                             "order": 0,
