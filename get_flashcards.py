@@ -4,6 +4,7 @@ import os, json
 import pandas as pd
 from flask import Flask
 from flask.ext.cors import CORS
+#pip install -U flask-cors
 
 app = Flask(__name__)
 
