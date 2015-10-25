@@ -56,6 +56,9 @@ md-list-item.md-3-line md-divider[md-inset] {
 .text-center {
   text-align: center;
 }
+.gridListdemoDynamicTiles {
+  overflow: hidden;
+}
 .gridListdemoDynamicTiles md-icon {
   width: 50%;
   height: 30%;
@@ -138,7 +141,7 @@ md-list-item.md-3-line md-divider[md-inset] {
 .gridListdemoDynamicTiles .closedCard md-grid-tile-footer {
   visibility: visible;
 }
-.gridListdemoDynamicTiles .openedCard md-grid-tile-footer {
+.gridListdemoDynamicTiles .openedCard md-grid-tile-footer, .gridListdemoDynamicTiles .openedCard md-grid-tile-header {
   display: none;
 }
 .gridListdemoDynamicTiles .closedCard .flashCardAnswer {
@@ -153,6 +156,8 @@ md-list-item.md-3-line md-divider[md-inset] {
   margin: 0;
   text-align: justify;
   font-size: 14px;
+  max-width: 95%;
+  height: 100%;
 }
 .gridListdemoDynamicTiles .openedCard {
   transform: rotateY(360deg);
