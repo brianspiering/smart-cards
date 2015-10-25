@@ -1,7 +1,9 @@
 from nltk.corpus import wordnet as wn
 from itertools import product,chain
 from collections import defaultdict
-import operator,json,csv,sys
+from get_data_from_wolfram import *
+import get_data_from_wolfram as gdfw
+import operator,json,csv,sys,subprocess
 
 def get_definitions(word):
     '''
@@ -24,6 +26,11 @@ def get_ontology(seed_syn,word,write_file=False):
         hypernyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hypernyms()])))
         hyponyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hyponyms()])))
 
+    if not hyponyms.values()[0]:
+        return [],[]
+    
+    print len(hyponyms.values()),hyponyms.values()
+    
     hypo_words = [hyponyms.values()[i].split(',') for i in range(len(hyponyms.values())) if hyponyms.values()[i]][0]
     hypo_syns = [get_definitions(hypo_words[i]).keys()[0] for i in xrange(len(hypo_words))]
     relevant_hypo_synsets = calc_seed_similarity(seed_syn,hypo_syns)
@@ -38,7 +45,7 @@ def get_ontology(seed_syn,word,write_file=False):
             writer = csv.writer(output, lineterminator='\n')
             writer.writerow(hypo_out) 
     
-    return hypernyms, relevant_hypo_synsets #hyponyms
+    return hypernyms, relevant_hypo_synsets
 
 def calc_seed_similarity(seed_syn,topic_syns,threshold=.2):
     '''
@@ -111,3 +118,7 @@ def main(argv):
 if __name__ == "__main__":
     _,topic = sys.argv
     main(topic)
+   
+    p = subprocess.Popen("python get_data_from_wolfram.py " + topic, stdout=subprocess.PIPE, shell=True)
+    (output, err) = p.communicate()
+    print output
