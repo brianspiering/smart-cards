@@ -33,11 +33,32 @@ app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog'
   $scope.colors = ['red', 'blue', 'green', 'darkBlue', 'yellow', 'purple', 'deepBlue', 'lightPurple'];
 
   $scope.fetchFlashCards = function(keyword) {
+    var flashCards = [];
     var requestURL = BASE_URL + "category=" + keyword;
     $http.get(requestURL, {})
       .success(function (data, status, headers, config) {
-        console.log(data);
-      });
+        var i = 0;
+        angular.forEach(data, function(flashCard) {
+          flashCard.fcid = i++;
+          flashCards.push({
+            question: flashCard.term || $scope.keyword,
+            answer: flashCard.definition || "./" + flashCard.term_image,
+            topic: "Math",
+            color: $scope.colors[flashCard.fcid % 7],
+            id: flashCard.fcid
+          })
+        });
+        $scope.flashCards = flashCards;
+        $scope.$apply();
+        setTimeout(function() {
+          $scope.processFlashCards();
+        }, 500);
+      })
+      .error(function(data, status) {
+        $scope.messages = data || "Request failed";
+        $scope.status = status;
+       });
+
     /*$scope.flashCards = [{
       question: "What is an outlier ?",
       answer: "A number that is a lot smaller or larger than the rest",
@@ -69,6 +90,20 @@ app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog'
       color: "blue",
       id: "5"
     }];*/
+  }
+
+  $scope.processFlashCards = function() {
+    var cardsDom = document.getElementsByClassName("flashCard");
+    angular.forEach(cardsDom, function(cardDom) {
+      var cardInnerDom = cardDom.children[0].children[2];
+      var cardInnerHtml = cardInnerDom.children[0].innerHTML.trim();
+      if (cardInnerHtml.indexOf("./data/images") == 0) {
+        cardInnerDom.children[0].innerHTML = "";
+        angular.element(cardInnerDom).css("background-repeat", 'no-repeat');
+        angular.element(cardInnerDom).css("background-position", 'center');
+        angular.element(cardInnerDom).css("background-image", 'url("' + cardInnerHtml + '")');
+      }
+    })
   }
 
   // Toolbar search toggle
@@ -145,6 +180,7 @@ app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog'
           $http: $http
         };
         setTimeout(function() {
+          me.scope.keyword = me.keyword;
           me.scope.fetchFlashCards(me.keyword, me.$http);
           me.scope.$apply();
         }, 500);

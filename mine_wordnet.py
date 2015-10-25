@@ -13,6 +13,10 @@ import csv
 import sys
 import subprocess
 
+import get_data_from_wolfram
+reload(get_data_from_wolfram)
+from get_data_from_wolfram import *
+
 def get_definitions(word):
     '''
     Takes a word as input and returns all definitions in the form of a
@@ -34,7 +38,8 @@ def get_ontology(seed_syn,word,write_file=False):
         hypernyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hypernyms()])))
         hyponyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hyponyms()])))
 
-    if not hyponyms.values():
+    # If list is empty or 1st elment is empty leave the function
+    if not hyponyms.values()[0]: # not hyponyms.values()
         return [],[]
     
     hypo_words = [hyponyms.values()[i].split(',') for i in range(len(hyponyms.values())) if hyponyms.values()[i]][0]
@@ -123,6 +128,4 @@ if __name__ == "__main__":
     main(topic)
     
     # Now that we've retrieved relevant semantic meanings, run the wolfram api script
-    p = subprocess.Popen("python get_data_from_wolfram.py " + topic, stdout=subprocess.PIPE, shell=True)
-    (output, err) = p.communicate()
-    print output
+    call_wolfram_api(topic)
