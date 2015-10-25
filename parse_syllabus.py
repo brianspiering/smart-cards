@@ -26,10 +26,10 @@ def parse_syllabus(syllabus_text):
     
     
     # get math lexicons
-    df_cal = pd.read_csv("/Users/Alexander/hacking_edu/data/calculus_lexicon.csv", header=None)
-    df_alg = pd.read_csv("/Users/Alexander/hacking_edu/data/algebra_lexicon.csv", header=None)
-    df_trig = pd.read_csv("/Users/Alexander/hacking_edu/data/trigonometry_lexicon.csv", header=None)
-    df_geo = pd.read_csv("/Users/Alexander/hacking_edu/data/geometry_lexicon.csv", header=None)
+    df_cal = pd.read_csv("data/calculus_lexicon.csv", header=None)
+    df_alg = pd.read_csv("data/algebra_lexicon.csv", header=None)
+    df_trig = pd.read_csv("data/trigonometry_lexicon.csv", header=None)
+    df_geo = pd.read_csv("data/geometry_lexicon.csv", header=None)
     
     cal = df_cal[df_cal.columns].values[0]
     alg = df_alg[df_alg.columns].values[0]
