@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup
 with open('wolframalpha_api.config', 'r') as f:
     wolfram_key = f.readline().rstrip()
  
-# Get phrase translation
+# Get phrase translation dictionary
 with open("title_translation.json", "r") as f:
     title_translation = json.load(f)
 
@@ -76,8 +76,6 @@ def call_wolfram_api(topic):
 
     # Call api for each topic
     for hyponym in hyponyms:
-        
-        print(hyponym)
 
         hyponym = hyponym.replace('_', ' ').lower().strip()
 

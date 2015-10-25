@@ -38,7 +38,8 @@ def get_ontology(seed_syn,word,write_file=False):
         hypernyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hypernyms()])))
         hyponyms[j] = ",".join(list(chain(*[l.lemma_names() for l in j.hyponyms()])))
 
-    if not hyponyms.values():
+    # If list is empty or 1st elment is empty leave the function
+    if not hyponyms.values()[0]: # not hyponyms.values()
         return [],[]
     
     hypo_words = [hyponyms.values()[i].split(',') for i in range(len(hyponyms.values())) if hyponyms.values()[i]][0]
