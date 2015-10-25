@@ -56,7 +56,7 @@ with open("title_translation.json", "r") as f:
 # topic = raw_input('Enter a topic to query on Wolfram Alpha: ') # Ask for topic to query
 def main(argv):
     for topic in argv:
-        topic = topic.lower().strip()
+        topic = topic.replace('_', ' ').lower().strip()
 
         # Build URL using topic/key
         url = 'http://api.wolframalpha.com/v2/query?input=' + topic + "&format=image" +'&appid=' + wolfram_key 

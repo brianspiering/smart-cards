@@ -32,17 +32,10 @@ def get_ontology(seed_syn,word,write_file=False):
     if write_file:
         file_endpoint = "data/"+word+"_hyponyms.csv"
         hypo_out = [str(relevant_hypo_synsets[i][0].lemma_names()[0]).replace('_',' ') for i in range(len(relevant_hypo_synsets))]        
-        print(hypo_out)         
-#             if i == 0:
-#                 with open(file_endpoint, 'w') as data_out:
-#                     csv.writer(hypo_out, data_out)
-#             else:
-#                 with open(file_endpoint, 'a+') as data_out:
-#                     csv.writer(hypo_out, data_out)
+        # print(hypo_out)         
                 
         with open(file_endpoint, "w") as output:
             writer = csv.writer(output, lineterminator='\n')
-#             for hypo in hypo_out:
             writer.writerow(hypo_out) 
     
     return hypernyms, relevant_hypo_synsets #hyponyms
