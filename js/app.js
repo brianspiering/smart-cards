@@ -1,4 +1,5 @@
 var app = angular.module('StarterApp', ['ngMaterial']);
+var BASE_URL = "http://127.0.0.1:5000/"
 app.config(function($mdIconProvider) {
   /**
    * Load icon sets to get different svg icons
@@ -24,7 +25,7 @@ app.config(function($mdIconProvider) {
   .iconSet('avatars', 'https://raw.githubusercontent.com/angular/material/master/docs/app/icons/avatar-icons.svg', 24)
     .defaultIconSet('https://raw.githubusercontent.com/google/material-design-icons/master/sprites/svg-sprite/svg-sprite-action.svg', 24);
 });
-app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog', function($scope, $mdBottomSheet, $mdSidenav, $mdDialog) {
+app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog', '$http', function($scope, $mdBottomSheet, $mdSidenav, $mdDialog, $http) {
   /**
    * List of colors for the flash cards
    * @type {Array}
@@ -32,7 +33,11 @@ app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog'
   $scope.colors = ['red', 'blue', 'green', 'darkBlue', 'yellow', 'purple', 'deepBlue', 'lightPurple'];
 
   $scope.fetchFlashCards = function(keyword) {
-    $scope.flashCards = [{
+    $http.get(BASE_URL + "category=" + keyword, {})
+      .success(function (data, status, headers, config) {
+        console.log(data);
+      });
+    /*$scope.flashCards = [{
       question: "What is an outlier ?",
       answer: "A number that is a lot smaller or larger than the rest",
       topic: "Algebra",
@@ -62,7 +67,7 @@ app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog'
       topic: "Statistics",
       color: "blue",
       id: "5"
-    }];
+    }];*/
   }
 
   // Toolbar search toggle
@@ -123,29 +128,30 @@ app.controller('AppCtrl', ['$scope', '$mdBottomSheet', '$mdSidenav', '$mdDialog'
     });
   };
 
-  $scope.startSearch = function(ev) {
+  $scope.startSearch = function(ev, $http) {
     $mdDialog.show({
         controller: DialogController,
-        template: '<md-dialog aria-label="Mango (Fruit)" ng-cloak> <form> <md-toolbar> <div class="md-toolbar-tools"> <h2>Generate Flash Cards On</h2> <span flex></span> <md-button class="md-icon-button" ng-click="cancel()"> <md-icon md-svg-icon="navigation:ic_close_24px" aria-label="Close Dialog"></md-icon> </md-button> </div> </md-toolbar> <md-dialog-content style="max-width:800px;max-height:810px; "> <md-input-container md-theme="input" flex> <label>Fetch flash cards for</label> <input autocomplete="off" data-ng-model="keyword" placeholder="Fetch flash cards for"> </md-input-container> </md-dialog-content> <div class="md-actions" layout="row"> <md-button ng-click="answer(keyword)" style="margin-right:20px;" > Go </md-button> </div> </form> </md-dialog>',
+        template: '<md-dialog aria-label="Generate Flash Card" ng-cloak> <form> <md-toolbar> <div class="md-toolbar-tools"> <h2>Generate Flash Cards On</h2> <span flex></span> <md-button class="md-icon-button" ng-click="cancel()"> <md-icon md-svg-icon="navigation:ic_close_24px" aria-label="Close Dialog"></md-icon> </md-button> </div> </md-toolbar> <md-dialog-content style="max-width:800px;max-height:810px; "> <md-input-container md-theme="input" flex> <label>Fetch flash cards for</label> <input autocomplete="off" data-ng-model="keyword" placeholder="Fetch flash cards for"> </md-input-container> </md-dialog-content> <div class="md-actions" layout="row"> <md-button ng-click="answer(keyword)" style="margin-right:20px;" > Go </md-button> </div> </form> </md-dialog>',
         parent: angular.element(document.body),
-        targetEvent: ev,
+        targetEvent: null,
         clickOutsideToClose: true
       })
       .then(function(keyword) {
         delete $scope.flashCards;
         var me = {
           scope: $scope,
-          keyword: keyword
+          keyword: keyword,
+          $http: $http
         };
         setTimeout(function() {
-          me.scope.fetchFlashCards(me.keyword);
+          me.scope.fetchFlashCards(me.keyword, me.$http);
           me.scope.$apply();
         }, 500);
       }, function() {
         $scope.status = 'You cancelled the dialog.';
       });
   };
-  $scope.startSearch();
+  $scope.startSearch(event, $http);
 }]);
 
 app.controller('ListBottomSheetCtrl', function($scope, $mdBottomSheet) {
