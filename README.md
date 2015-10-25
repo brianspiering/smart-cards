@@ -18,8 +18,8 @@ Creating an generic framework to auto-create sets of flashcards based on very li
 Continuing to build out the knowledge base to more accurately scope sets and retrieve information from existing and available knowledge bases.
 
 ### Installation
--Extract the zip
--Make sure you have installed flask
--Install the CORS plugin in case it's not going to be hosted "pip install -U flask-cors"
--Start server by running "python get_flashcards.py"
--Once it starts, hit index.html and have fun generating flash cards in the smartest way ever
+1.Extract the zip
+2.Make sure you have installed **flask**
+3.Install the CORS plugin in case it's not going to be hosted **pip install -U flask-cors**
+4.Start server by running **python get_flashcards.py**
+5.Once it starts, hit **index.html** and have fun generating flash cards in the smartest way ever
