@@ -103,7 +103,9 @@ def main(argv):
     for i in range(len(relevant_synsets)):
         create_flashcard(i,topic,topic_syns[relevant_synsets[i][0]])
 
-    _,_ = get_ontology(seed_syn,topic,write_file=True) # hypernyms, hyponyms
+    # We only want to get the ontology if we have a valid synset for our SEED
+    if relevant_synsets:
+        _,_ = get_ontology(seed_syn,topic,write_file=True) # hypernyms, hyponyms
 
 if __name__ == "__main__":
     _,topic = sys.argv
