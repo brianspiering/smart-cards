@@ -1,0 +1,8 @@
+Mathematics 117, Trigonometry, helps students develop skills sufficiently to write and
+use the definition of trigonometric functions; sketch the graph of the trigonometric
+functions; prove identities; solve trigonometric equations; learn and then apply the law
+of the sines and cosines; learn how to write a complex number in trigonometric form
+and find all the roots of a complex number; learn polar coordinates system and the
+graphs of some simple equations in polar; learn about conic sections (rectangular &
+polar), vector (applications & operations), and the exponential and logarithmic
+functions with applications and modeling

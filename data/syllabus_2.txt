@@ -1,0 +1,12 @@
+This course is intended for college-bound students. In this class, we will study angles,
+degree and radian measurements, the six different trigonometric functions, graphing,
+identities, solving equations, Law of Sines, Law of Cosines, and other trig. Related
+applications.
+Chapters to be covered
+1. The trigonometric functions
+2. Acute angles and right triangles
+3. Radian measure and circular functions
+4. Graphs of circular functions
+5. Trigonometric identities
+7. Applications of trigonometry and vectors
+6. Inverse trigonometric functions and trigonometric equations?
