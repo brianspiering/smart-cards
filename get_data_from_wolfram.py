@@ -101,7 +101,7 @@ def main(argv):
                             "hint_image": None}
 
                     # Save the data
-                    flashcard_endpoint = "data/"+topic+".json"
+                    flashcard_endpoint = "data/"+category+"_"+topic+".json"
 
                     with open(flashcard_endpoint, "w") as data_out:
                         json.dump(flashcard, data_out)
