@@ -26,40 +26,8 @@ def clean_wolfram_data(raw_data):
 def make_card_front(title, topic):
     "Reformat a title string into front of a flashcard."
     
-    # Create a translation dictionary
-    phrase = {'plot': {'subject': 'Please draw a plot of', 
-                        'punctation': '.'},
-             'plots': {'subject': 'Please draw a plot of', 
-                        'punctation': '.'},
-             'illustration': {'subject': 'Please draw a plot of', 
-                        'punctation': '.'},
-              'visual form':{'subject': 'What is the mathmatical symbol for', 
-                            'punctation': '?'},
-             'decimal approximation': {'subject': 'Name as many decimals as possible for', 
-                            'punctation': '.'},
-             'basic definition': {'subject': 'What is the definition of', 
-                            'punctation': '?'},              
-             'definition': {'subject': 'What is the definition of', 
-                            'punctation': '?'},
-             'definitions': {'subject': 'What are definitions of', 
-                            'punctation': '?'},
-            'equation': {'subject': 'What is the equation for', 
-                            'punctation': '?'},
-              'conversions to other units': {'subject': 'Name equivalent terms for', 
-                            'punctation': '.'},
-              'number name': {'subject': 'Name equivalent terms for', 
-                            'punctation': '.'}, 
-                'statement': {'subject': 'What is the', 
-                            'punctation': '?'}, 
-            'alternate names': {'subject': 'What are alternate names for', 
-                            'punctation': '?'},  
-                'limit':  {'subject': 'What is unique about a ', 
-                            'punctation': '?'}       
-             }
-    
     title = title.lower().strip() # Munge data
-    
-    card_front = phrase[title]['subject']+' '+topic+phrase[title]['punctation']
+    card_front = title_translation[title]['subject']+' '+topic+title_translation[title]['punctation']
     return card_front
 
 def save_image(url, filename):
@@ -72,11 +40,16 @@ def save_image(url, filename):
             shutil.copyfileobj(r.raw, f)
     else:
         print('Non-valid url')    
-    
+  
+
 # Open config file to get key
 with open('wolframalpha_api.config', 'r') as f:
     wolfram_key = f.readline().rstrip()
-            
+ 
+# Get phrase translation
+with open("title_translation.json", "r") as f:
+    title_translation = json.load(f)
+
 # Ask for topic to query
 topic = raw_input('Enter a topic to query on Wolfram Alpha: ')
 topic = topic.lower().strip()
@@ -93,7 +66,8 @@ soup = BeautifulSoup(data)
 for i, pod in enumerate(soup.findAll('pod')):
     if i == 1:
         try:
-            card_front = make_card_front(pod.attrs['title'], topic)
+            title = pod.attrs['title']
+            card_front = make_card_front(title, topic)
 
             # raw_data = pod.findAll("img")[0].get("alt") # Sometimes 
             # card_back = clean_wolfram_data(raw_data) # The text is not good nor consistent
@@ -118,5 +92,7 @@ for i, pod in enumerate(soup.findAll('pod')):
             print('Wolfram Alpha data stored for: '+topic)
 
             break
+        except KeyError:
+            print("New title. Please process: '"+title+"'")
         except NameError:
             print("Couldn't find your term. Please try another one.")
