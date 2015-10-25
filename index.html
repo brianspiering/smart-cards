@@ -35,7 +35,7 @@
     </md-list>
   </md-sidenav>
   <div layout="column" class="relative" layout-fill role="main">
-    <md-button class="md-fab md-fab-bottom-right" aria-label="Search" ng-click="startSearch($event)">
+    <md-button class="md-fab md-fab-bottom-right" aria-label="Search" ng-click="startSearch($event, $http)">
       <md-icon md-svg-icon="action:ic_search_24px" aria-label="Search"></md-icon>
     </md-button>
     <md-toolbar class="animate-show md-tall md-whiteframe-z1" ng-show="!showSearch">
