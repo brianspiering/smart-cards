@@ -1,9 +1,7 @@
 from nltk.corpus import wordnet as wn
 from itertools import product,chain
 from collections import defaultdict
-from get_data_from_wolfram import *
-import get_data_from_wolfram as gdfw
-import operator,json,csv,sys,subprocess
+import operator,json,csv,sys,subprocess,os.path
 
 def get_definitions(word):
     '''
@@ -33,13 +31,11 @@ def get_ontology(seed_syn,word,write_file=False):
     hypo_syns = [get_definitions(hypo_words[i].replace(' ','_')).keys()[0] for i in xrange(len(hypo_words))]
     relevant_hypo_synsets = calc_seed_similarity(seed_syn,hypo_syns)
     
-    print hypo_syns,relevant_hypo_synsets
-    
     # Write to file as feeder system to wolfram alpha api code
     if write_file:
         file_endpoint = "data/"+word+"_hyponyms.csv"
-        hypo_out = [str(relevant_hypo_synsets[i][0].lemma_names()[0]).replace('_',' ') for i in range(len(relevant_hypo_synsets))]        
-        # print(hypo_out)         
+        hypo_out = [str(relevant_hypo_synsets[i][0].lemma_names()[0]).replace('_',' ')
+                    for i in range(len(relevant_hypo_synsets))]        
                 
         with open(file_endpoint, "w") as output:
             writer = csv.writer(output, lineterminator='\n')
@@ -60,7 +56,7 @@ def calc_seed_similarity(seed_syn,topic_syns,threshold=.2):
             similarity_scores[topic_syns[i]] = score
     return sorted(similarity_scores.items(), key=operator.itemgetter(1), reverse=True) 
 
-def create_flashcard(card_front,card_back,mode='w'):
+def create_flashcard(i,card_front,card_back):
     '''
     Create a flashcard with the front and back of the card as input
     arguments. By default a new data file will be written, but the mode
@@ -76,49 +72,45 @@ def create_flashcard(card_front,card_back,mode='w'):
                  "hint_image": None}
     
     # Save the data
-    file_endpoint = "data/"+card_front+".json"
-
-    if mode.startswith('a'):
-        with open(file_endpoint, 'a+') as data_out:
-            json.dump(',', data_out)
-            json.dump(flashcard, data_out)
-    else:
-        with open(file_endpoint, 'w') as data_out:
-            json.dump(flashcard, data_out) 
-
-#### TODO: Not yet converted to real function
-# def get_synonyms(word):
-#     print "THESAURUS"
-#     print 50 * '*'
-#     for i,j in enumerate(wn.synsets(topic)):
-#         print "Meaning",i, "NLTK ID:", j.name()
-#         print "Definition:",j.definition()
-#         print "Synonyms:",  ", ".join(j.lemma_names())
-#         print
+    file_endpoint = "data/"+card_front+"_text"+str(i)+".json"
+    with open(file_endpoint, "w") as data_out:
+        json.dump(flashcard, data_out)
 
 def main(argv):
+    
+    DEBUG = False
+    
     # Start by providing seed word to filter out unrelated topics/words
     SEED = 'math'
     seed_syn = get_definitions(SEED).keys()[0]
-    # print 'SEED: ',SEED
-    # print seed_syn
+    
+    if DEBUG:
+        print 'SEED: ',SEED
+        print seed_syn
 
     topic = argv
     topic_syns = get_definitions(topic)
     print 'TOPIC: ',topic
-    # print 'SYNSETS: ',topic_syns
+    if DEBUG:
+        print 'SYNSETS: ',topic_syns
 
     relevant_synsets = calc_seed_similarity(seed_syn,topic_syns.keys())
-    print 'REL SYNSETS: ',relevant_synsets
-    # for i in range(len(relevant_synsets)):
-    #     create_flashcard(topic,topic_syns[relevant_synsets[i][0]],mode='a+')
+    if DEBUG:
+        print 'REL SYNSETS: ',relevant_synsets
+        
+    # Create definition flashcards for relevant semantic matches
+    for i in range(len(relevant_synsets)):
+        create_flashcard(i,topic,topic_syns[relevant_synsets[i][0]])
 
-    hypernyms,hyponyms = get_ontology(seed_syn,topic,write_file=True)
+    # We only want to get the ontology if we have a valid synset for our SEED
+    if relevant_synsets:
+        _,_ = get_ontology(seed_syn,topic,write_file=True) # hypernyms, hyponyms
 
 if __name__ == "__main__":
+    # Retrive relevant semantic meanings from the topic entered by user
     _,topic = sys.argv
     main(topic)
-   
+    
+    # Now that we've retrieved relevant semantic meanings, run the wolfram api script
     p = subprocess.Popen("python get_data_from_wolfram.py " + topic, stdout=subprocess.PIPE, shell=True)
     (output, err) = p.communicate()
-    print output

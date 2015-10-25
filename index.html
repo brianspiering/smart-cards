@@ -1,0 +1,151 @@
+<html lang="en" ng-app="StarterApp">
+
+<head>
+  <link rel="stylesheet" href="./css/angular-material.min.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <title>Flash IT</title>
+</head>
+
+<body layout="row" ng-controller="AppCtrl" ng-cloak>
+  <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
+    <md-toolbar class="md-hue-2">
+      <span flex></span>
+      <div layout="row" layout-align="start center" id="userProfile">
+        <md-icon class="md-avatar" md-svg-icon="avatars:svg-1"></md-icon>
+        <span flex></span>
+      </div>
+      <span flex></span>
+      <div class="md-body-2 text-center">Joe Manley</div>
+    </md-toolbar>
+    <md-list>
+      <md-list-item class="md-2-line" ng-repeat="item in menu" role="link" md-ink-ripple>
+        <md-icon md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
+        <div class="md-list-item-text">
+          <span class="md-body-2">{{item.title}}</span>
+        </div>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-subheader class="md-no-sticky">Management</md-subheader>
+      <md-list-item class="md-2-line" ng-repeat="item in admin" role="link" md-ink-ripple>
+        <md-icon md-svg-icon="{{item.icon}}" aria-label="{{item.title}}"></md-icon>
+        <div class="md-list-item-text">
+          <span class="md-body-2">{{item.title}}</span>
+        </div>
+      </md-list-item>
+    </md-list>
+  </md-sidenav>
+  <div layout="column" class="relative" layout-fill role="main">
+    <md-button class="md-fab md-fab-bottom-right" aria-label="Search" ng-click="startSearch($event, $http)">
+      <md-icon md-svg-icon="action:ic_search_24px" aria-label="Search"></md-icon>
+    </md-button>
+    <md-toolbar class="animate-show md-tall md-whiteframe-z1" ng-show="!showSearch">
+      <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" ng-click="toggleSidenav('left')" hide-gt-md aria-label="Menu">
+          <md-icon md-svg-icon="navigation:ic_menu_24px" aria-label="Menu"></md-icon>
+        </md-button>
+        <h3>
+          Cardboard
+        </h3>
+        <span flex></span>
+        <md-button class="md-icon-button" aria-label="Search" ng-click="toggleSearch()">
+          <md-icon md-svg-icon="action:ic_search_24px" aria-label="Search"></md-icon>
+        </md-button>
+        <md-button class="md-icon-button" aria-label="Open Settings" ng-click="showListBottomSheet($event)">
+          <md-icon md-svg-icon="navigation:ic_more_vert_24px" aria-label="More"></md-icon>
+        </md-button>
+      </div>
+      <span flex></span>
+      <md-tabs md-stretch-tabs="always" md-selected="data.selectedIndex">
+        <md-tab id="tab1" aria-controls="tab1-content">
+          Latest
+        </md-tab>
+        <md-tab id="tab2" aria-controls="tab2-content">
+          Favorites
+        </md-tab>
+      </md-tabs>
+    </md-toolbar>
+    <md-toolbar class="md-hue-1" ng-show="showSearch">
+      <div class="md-toolbar-tools">
+        <md-button ng-click="showSearch = !showSearch" aria-label="Back">
+          <md-icon md-svg-icon="navigation:ic_arrow_back_24px" aria-label="Back"></md-icon>
+        </md-button>
+        <h3 flex="10">
+          Back
+        </h3>
+        <md-input-container md-theme="input" flex>
+          <label>Look up for...</label>
+          <input ng-model="search.topic" placeholder="Look up for...">
+        </md-input-container>
+        <md-button aria-label="Search" ng-click="showSearch = !showSearch">
+          <md-icon md-svg-icon="action:ic_search_24px" aria-label="Search"></md-icon>
+        </md-button>
+        <md-button aria-label="Open Settings" ng-click="showListBottomSheet($event)">
+          <md-icon md-svg-icon="navigation:ic_more_vert_24px" aria-label="More"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-content flex>
+    <div ui-view></div>
+      <ui-view layout="column" layout-fill layout-padding>
+        <div class="inset" hide-sm></div>
+        <ng-switch on="data.selectedIndex" class="tabpanel-container">
+          <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout="row" layout-align="center center">
+            <div flex-gt-sm="90" flex-gt-md="80">
+              <div class="gridListdemoDynamicTiles" flex="">
+                <md-grid-list md-cols-sm="2" md-cols-md="4" md-cols-gt-md="8" md-row-height-gt-md="1:1" md-row-height="4:3" md-gutter="8px" md-gutter-gt-sm="4px">
+                  <md-grid-tile md-rowspan="2" md-colspan="2" md-colspan-sm="1" id="{{'card_' + card.id}}" class="closedCard" ng-repeat="card in flashCards | filter:search" ng-class="card.color" ng-click="toggleFlashCard($event)">
+                    <md-grid-tile-header>
+                      <h3>{{card.topic}}</h3>
+                    </md-grid-tile-header>
+                    <md-grid-tile-footer>
+                      <h3>{{card.question}}</h3>
+                    </md-grid-tile-footer>
+                    <div class="flashCardAnswer">
+                      <h3>
+                        {{card.answer}}
+                      </h3>
+                    </div>
+                  </md-grid-tile>
+                </md-grid-list>
+              </div>
+            </div>
+
+          </div>
+          <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout="row" layout-align="center center">
+            <div flex-gt-sm="90" flex-gt-md="80">
+              <div class="gridListdemoDynamicTiles" flex="">
+                <md-grid-list md-cols-sm="2" md-cols-md="4" md-cols-gt-md="8" md-row-height-gt-md="1:1" md-row-height="4:3" md-gutter="8px" md-gutter-gt-sm="4px">
+                  <md-grid-tile md-rowspan="2" md-colspan="2" md-colspan-sm="1" id="{{'card_' + card.id}}" class="closedCard" ng-repeat="card in flashCards | filter:search" ng-class="card.color" ng-click="toggleFlashCard($event)">
+                    <md-grid-tile-header>
+                      <h3>{{card.topic}}</h3>
+                    </md-grid-tile-header>
+                    <md-grid-tile-footer>
+                      <h3>{{card.question}}</h3>
+                    </md-grid-tile-footer>
+                    <div class="flashCardAnswer">
+                      <h3>
+                        {{card.answer}}
+                      </h3>
+                    </div>
+                  </md-grid-tile>
+                </md-grid-list>
+              </div>
+            </div>
+          </div>
+
+        </ng-switch>
+
+      </ui-view>
+    </md-content>
+  </div>
+  <!-- Angular Material Dependencies -->
+  <script src="./js/angular.min.js"></script>
+  <script src="./js/angular-animate.min.js"></script>
+  <script src="./js/angular-aria.min.js"></script>
+  <!-- Angular Material -->
+  <script src="./js/angular-material.min.js"></script>
+  <!-- App js -->
+  <script src="./js/app.js"></script>
+</body>
+
+</html>
